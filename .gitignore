@@ -1,0 +1,5 @@
+openfabric-api/build/**
+openfabric-api/bin/**
+*.log
+gradle/**
+.gradle
