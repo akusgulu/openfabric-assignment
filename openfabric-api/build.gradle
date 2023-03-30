@@ -22,6 +22,15 @@ repositories {
     mavenLocal()
 }
 
+configurations {
+    dev
+}
+
+bootRun {
+    // Use Spring Boot DevTool only when we run Gradle bootRun task
+    classpath = sourceSets.main.runtimeClasspath + configurations.dev
+}
+
 dependencies {
     //-------
     implementation 'com.yahoo.elide:elide-spring-boot-starter:4.8.0'
@@ -38,6 +47,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security:2.7.5'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.5'
     //-------
+    // https://mvnrepository.com/artifact/com.github.docker-java/docker-java
+    implementation 'com.github.docker-java:docker-java:3.3.0'
+    // https://mvnrepository.com/artifact/com.github.docker-java/docker-java-transport-httpclient5
+    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.3.0'
+    //-------
+    developmentOnly "org.springframework.boot:spring-boot-devtools:2.7.5"
+
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     // ------
