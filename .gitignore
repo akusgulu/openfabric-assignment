@@ -3,3 +3,5 @@ openfabric-api/bin/**
 *.log
 gradle/**
 .gradle
+.vscode
+build/
