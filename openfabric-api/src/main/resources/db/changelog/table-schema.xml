@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <!-- ############################################################ -->
     <!--   DBMS SPECIFIC SETUP   -->
     <!-- ############################################################ -->
-    <property name="uuid_type" value="CHAR(36)" dbms="postgresql"/>
-    <property name="uuid_type" value="uniqueidentifier" dbms="mssql"/>
-    <property name="uuid_type" value="RAW(16)" dbms="oracle"/>
-    <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
-    <property name="uuid_function" value="NEWID()" dbms="mssql"/>
-    <property name="uuid_function" value="sys_guid()" dbms="oracle"/>
+    <property name="uuid_type" value="CHAR(36)" dbms="postgresql" />
+    <property name="uuid_type" value="uniqueidentifier" dbms="mssql" />
+    <property name="uuid_type" value="RAW(16)" dbms="oracle" />
+    <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql" />
+    <property name="uuid_function" value="NEWID()" dbms="mssql" />
+    <property name="uuid_function" value="sys_guid()" dbms="oracle" />
 
     <changeSet id="EXTENSION" author="andrei">
-        <sql>
-            CREATE
-            EXTENSION IF NOT EXISTS "uuid-ossp";
-        </sql>
+        <sql> CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; </sql>
     </changeSet>
     <changeSet id="SEQUENCE" author="andrei">
-        <sql>
-            CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1;
-        </sql>
+        <sql> CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1; </sql>
     </changeSet>
 
     <!-- ############################################################ -->
@@ -34,15 +28,50 @@
     <changeSet id="WO_01" author="andrei">
         <createTable tableName="worker" remarks="Worker table">
             <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
-                <constraints nullable="false" primaryKey="true"/>
+                <constraints nullable="false" primaryKey="true" />
             </column>
-            <column name="name" type="varchar(255)"/>
+            <column name="name" type="varchar(255)" />
 
-            <column name="created_at" type="DATETIME"/>
-            <column name="updated_at" type="DATETIME"/>
-            <column name="deleted_at" type="DATETIME"/>
+            <column name="created_at" type="DATETIME" />
+            <column name="updated_at" type="DATETIME" />
+            <column name="deleted_at" type="DATETIME" />
         </createTable>
     </changeSet>
 
+    <changeSet id="WO_02" author="akusgulu">
+        <addColumn tableName="worker">
+            <column name="command" type="varchar(255)" />
+            <column name="image" type="varchar(255)" />
+            <column name="status" type="varchar(255)" />
+            <column name="ports" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="WS_01" author="akusgulu">
+        <createTable tableName="worker_stats" remarks="Worker stats table">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="name" type="varchar(255)" />
+            <column name="cpu_percent" type="varchar(255)" />
+            <column name="mem_usage" type="varchar(255)" />
+            <column name="mem_limit" type="varchar(255)" />
+            <column name="mem_percent" type="varchar(255)" />
+            <column name="net_io" type="varchar(255)" />
+            <column name="block_io" type="varchar(255)" />
+            <column name="pid" type="varchar(255)" />
+            <column name="worker_id" type="${uuid_type}">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="WS_02" author="akusgulu">
+        <addForeignKeyConstraint baseTableName="worker_stats"
+            baseColumnNames="worker_id"
+            referencedTableName="worker"
+            referencedColumnNames="id"
+            constraintName="fk_worker_stats_worker" />
+    </changeSet>
 
 </databaseChangeLog>
